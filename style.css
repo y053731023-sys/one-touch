@@ -84,7 +84,7 @@ body, html {
 
 /* Base Card Styles */
 .card {
-    width: min(65vw, 40vh);
+    width: min(85vw, 60vh);
     aspect-ratio: 2.5 / 3.5;
     position: relative;
     border-radius: min(4vw, 15px);
@@ -128,7 +128,7 @@ body, html {
 
 /* Phase 2 single card */
 .single-card-container {
-    width: min(70vw, 45vh);
+    width: min(90vw, 65vh);
     aspect-ratio: 2.5 / 3.5;
     perspective: 1000px;
 }
