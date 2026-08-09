@@ -180,3 +180,12 @@ function renderCardFront(element, card) {
 
 // 啟動應用程式
 initCarousel();
+
+// 讓畫面一開始捲動到最中間的牌，這樣觀眾一開始就能往左或往右滑
+setTimeout(() => {
+    const middleIndex = Math.floor(deck.length / 2);
+    if (carousel.children[middleIndex]) {
+        // 使用 instant 捲動，避免一開始載入時看到動畫
+        carousel.children[middleIndex].scrollIntoView({ behavior: 'instant', inline: 'center', block: 'nearest' });
+    }
+}, 0);
