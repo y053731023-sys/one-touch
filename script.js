@@ -43,7 +43,7 @@ const observer = new IntersectionObserver((entries) => {
                     isRecordingActive = false;
                     if (navigator.vibrate) navigator.vibrate([10, 50, 10]);
                     console.log("背景紀錄觀眾的牌:", secretChosenCard.suit.display, secretChosenCard.value);
-                }, 3000);
+                }, 5000);
             }
         } else {
             if (entry.target === currentlyVisibleCardElement) {
@@ -73,7 +73,7 @@ if (secretTrigger) {
                 isRecordingActive = false;
                 if (navigator.vibrate) navigator.vibrate([10, 50, 10]);
                 console.log("背景紀錄觀眾的牌:", secretChosenCard.suit.display, secretChosenCard.value);
-            }, 3000);
+            }, 5000);
         }
     });
 }
