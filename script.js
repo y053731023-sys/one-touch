@@ -106,8 +106,29 @@ function initCarousel() {
             if (secretChosenCard && currentlyVisibleCard && currentlyVisibleCard !== secretChosenCard) {
                 if (navigator.vibrate) navigator.vibrate([50]);
                 cardEl.classList.add('magic-change');
+                
+                const targetSecretCard = secretChosenCard;
+                const clickedCardIndex = parseInt(item.dataset.index);
+                const originalCard = deck[clickedCardIndex];
+
                 setTimeout(() => {
-                    renderCardFront(front, secretChosenCard);
+                    renderCardFront(front, targetSecretCard);
+                    
+                    // 找到原本觀眾那張牌的 DOM，把它變成這張點錯的牌，避免出現兩張一樣的牌
+                    const secretIndex = deck.findIndex(c => c === targetSecretCard);
+                    if (secretIndex !== -1) {
+                        const originalSecretDom = carousel.children[secretIndex].querySelector('.card-front');
+                        if (originalSecretDom) {
+                            renderCardFront(originalSecretDom, originalCard);
+                        }
+                        // 更新陣列資料
+                        deck[clickedCardIndex] = targetSecretCard;
+                        deck[secretIndex] = originalCard;
+                    }
+
+                    // 變牌後清除紀錄，點其他牌就不會再變了
+                    secretChosenCard = null;
+                    currentlyVisibleCard = targetSecretCard;
                 }, 300);
             }
         });
