@@ -309,6 +309,21 @@ const btnCloseSettings = document.getElementById('btn-close-settings');
 const themeSelect = document.getElementById('theme-select');
 
 if (settingsBtn) {
+    let lastTap = 0;
+    // 支援手機與電腦的雙擊判斷
+    settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 500 && tapLength > 0) {
+            settingsModal.classList.add('show');
+            lastTap = 0; // 重置
+        } else {
+            lastTap = currentTime;
+        }
+    });
+
+    // 保留原本的 dblclick 備用
     settingsBtn.addEventListener('dblclick', (e) => {
         e.stopPropagation();
         settingsModal.classList.add('show');
