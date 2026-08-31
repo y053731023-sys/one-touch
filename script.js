@@ -70,6 +70,25 @@ const landmarkData = [
 ];
 const landmarkDeck = landmarkData.map(l => ({ type: 'landmark', ...l }));
 
+const beautyData = [
+    { name: '小朋友', url: '美女圖片/小朋友.jpg', display: '小朋友' },
+    { name: '短頭髮、小麥色、小胸部、亞洲人', url: '美女圖片/短頭髮、小麥色、小胸部、亞洲人.jpg', display: '短頭髮、小麥色、小胸部、亞洲人' },
+    { name: '短頭髮、黑色、大胸部、亞洲人', url: '美女圖片/短頭髮、黑色、大胸部、亞洲人.jpg', display: '短頭髮、黑色、大胸部、亞洲人' },
+    { name: '短頭髮、黑色、小胸部、亞洲人', url: '美女圖片/短頭髮、黑色、小胸部、亞洲人.jpg', display: '短頭髮、黑色、小胸部、亞洲人' },
+    { name: '短頭髮、黑色、小胸部、歐美人', url: '美女圖片/短頭髮、黑色、小胸部、歐美人.jpg', display: '短頭髮、黑色、小胸部、歐美人' },
+    { name: '老奶奶', url: '美女圖片/老奶奶.jpg', display: '老奶奶' },
+    { name: '長頭髮、黑色、大胸部、亞洲人', url: '美女圖片/長頭髮、黑色、大胸部、亞洲人.jpg', display: '長頭髮、黑色、大胸部、亞洲人' },
+    { name: '長頭髮、黑色、大胸部、歐美人', url: '美女圖片/長頭髮、黑色、大胸部、歐美人.jpg', display: '長頭髮、黑色、大胸部、歐美人' },
+    { name: '長頭髮、黑色、小胸部、亞洲人', url: '美女圖片/長頭髮、黑色、小胸部、亞洲人.jpg', display: '長頭髮、黑色、小胸部、亞洲人' },
+    { name: '長頭髮、黑色、小胸部、亞洲人、捲髮', url: '美女圖片/長頭髮、黑色、小胸部、亞洲人、捲髮.jpg', display: '長頭髮、黑色、小胸部、亞洲人、捲髮' },
+    { name: '長頭髮、黑色、小胸部、歐美人', url: '美女圖片/長頭髮、黑色、小胸部、歐美人.jpg', display: '長頭髮、黑色、小胸部、歐美人' },
+    { name: '黑皮膚、大胸部、短頭髮、歐美人', url: '美女圖片/黑皮膚、大胸部、短頭髮、歐美人.jpg', display: '黑皮膚、大胸部、短頭髮、歐美人' }
+];
+const beautyDeck = beautyData.map(b => ({ type: 'beauty', ...b }));
+
+let customData = [];
+let customDeck = [];
+
 let deck = [];
 
 // DOM 元素
@@ -237,29 +256,39 @@ function renderCardFront(element, card) {
         element.style.backgroundImage = `url(${getCardImageUrl(card.suit.symbol, card.value)})`;
         element.style.backgroundSize = '100% 100%';
         element.style.flexDirection = 'row';
-    } else if (card.type === 'flag' || card.type === 'landmark') {
+    } else if (card.type === 'flag' || card.type === 'landmark' || card.type === 'custom' || card.type === 'beauty') {
         element.style.backgroundImage = 'none';
         element.style.flexDirection = 'column';
         
         const img = document.createElement('img');
-        img.src = card.url;
+        if (card.url) {
+            img.src = card.url;
+        } else {
+            img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        }
         img.style.width = '85%';
-        img.style.aspectRatio = card.type === 'flag' ? '3 / 2' : '4 / 3'; // landmarks use 4:3
-        img.style.objectFit = 'cover';
+        img.style.aspectRatio = card.type === 'beauty' ? '3 / 4' : (card.type === 'flag' ? '3 / 2' : '4 / 3'); 
+        img.style.objectFit = (card.type === 'custom' || card.type === 'beauty') ? 'contain' : 'cover';
         img.style.border = '1px solid #ddd';
         img.style.borderRadius = '6px';
         img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-        img.style.marginBottom = '24px';
-        
-        const label = document.createElement('div');
-        label.textContent = card.display;
-        label.style.fontSize = '32px';
-        label.style.fontWeight = '600';
-        label.style.color = '#333';
-        label.style.letterSpacing = '4px';
+        img.style.marginBottom = ((card.type === 'custom' && card.url) || card.type === 'beauty') ? '0' : '24px';
         
         element.appendChild(img);
-        element.appendChild(label);
+        
+        if ((card.type !== 'custom' && card.type !== 'beauty') || (card.type === 'custom' && !card.url)) {
+            const label = document.createElement('div');
+            label.textContent = card.display;
+            label.style.fontSize = (card.type === 'custom' || card.type === 'beauty') ? '18px' : '32px';
+            label.style.fontWeight = '600';
+            label.style.color = '#333';
+            label.style.letterSpacing = (card.type === 'custom' || card.type === 'beauty') ? '1px' : '4px';
+            label.style.textAlign = 'center';
+            label.style.padding = '0 10px';
+            label.style.wordBreak = 'break-word';
+            
+            element.appendChild(label);
+        }
     }
 }
 
@@ -270,6 +299,13 @@ function loadDeckTheme(theme) {
         baseDeck = [...flagDeck];
     } else if (theme === 'theme-landmarks') {
         baseDeck = [...landmarkDeck];
+    } else if (theme === 'theme-beauties') {
+        baseDeck = [...beautyDeck];
+    } else if (theme === 'theme-custom') {
+        baseDeck = [...customDeck];
+        if (baseDeck.length === 0) {
+            baseDeck = [{ type: 'custom', url: '', display: '請先上傳圖片' }];
+        }
     } else {
         baseDeck = [...pokerDeck];
     }
@@ -277,7 +313,7 @@ function loadDeckTheme(theme) {
     
     // 建立大量重複的牌組以產生「無限循環」的效果
     deck = [];
-    const repeatCount = (theme === 'theme-flags' || theme === 'theme-landmarks') ? 50 : 15;
+    const repeatCount = (theme === 'theme-flags' || theme === 'theme-landmarks' || theme === 'theme-custom' || theme === 'theme-beauties') ? 50 : 15;
     for (let i = 0; i < repeatCount; i++) {
         deck.push(...baseDeck.map(c => ({...c})));
     }
@@ -337,22 +373,194 @@ if (btnCloseSettings) {
     });
 }
 
-if (themeSelect) {
-    // 讀取儲存的主題
-    const savedTheme = localStorage.getItem('magic-theme') || 'theme-poker';
-    document.body.className = savedTheme;
-    themeSelect.value = savedTheme;
-    
-    // 初次載入
-    loadDeckTheme(savedTheme);
+const customImageSettings = document.getElementById('custom-image-settings');
+const customImageInput = document.getElementById('custom-image-input');
+const btnUploadCustom = document.getElementById('btn-upload-custom');
+const customImageCount = document.getElementById('custom-image-count');
 
-    themeSelect.addEventListener('change', (e) => {
-        const newTheme = e.target.value;
-        document.body.className = newTheme;
-        localStorage.setItem('magic-theme', newTheme);
-        loadDeckTheme(newTheme);
+// --- IndexedDB for Custom Images ---
+const DB_NAME = 'MagicTrickDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'customImages';
+let db;
+
+function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = (e) => reject(e.target.error);
+        request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+        request.onupgradeneeded = (e) => {
+            db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+            }
+        };
     });
-} else {
-    loadDeckTheme('theme-poker');
 }
 
+function addCustomImagesToDB(files) {
+    return new Promise((resolve, reject) => {
+        if (!db) return resolve();
+        const tx = db.transaction([STORE_NAME], 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        files.forEach(file => store.add({ file: file, name: file.name }));
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e.target.error);
+    });
+}
+
+function deleteCustomImageFromDB(id) {
+    return new Promise((resolve, reject) => {
+        if (!db) return resolve();
+        const tx = db.transaction([STORE_NAME], 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        store.delete(id);
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e.target.error);
+    });
+}
+
+function loadCustomImagesFromDB() {
+    return new Promise((resolve, reject) => {
+        if (!db) return resolve([]);
+        const tx = db.transaction([STORE_NAME], 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = (e) => reject(e.target.error);
+    });
+}
+
+async function reloadCustomImages() {
+    const records = await loadCustomImagesFromDB();
+    processCustomFiles(records || []);
+    if (themeSelect && themeSelect.value === 'theme-custom') {
+        loadDeckTheme('theme-custom');
+    }
+}
+
+function processCustomFiles(records) {
+    customData = [];
+    
+    const customImageList = document.getElementById('custom-image-list');
+    if (customImageList) customImageList.innerHTML = '';
+
+    records.forEach((record, index) => {
+        const file = record.file;
+        const id = record.id;
+        const url = URL.createObjectURL(file);
+        
+        let displayName = file.name || "";
+        displayName = displayName.replace(/\.[^/.]+$/, "");
+        if (displayName.length > 8) {
+            displayName = displayName.substring(0, 8) + '...';
+        }
+        customData.push({
+            id: id,
+            name: file.name,
+            url: url,
+            display: displayName
+        });
+
+        if (customImageList) {
+            const thumbWrap = document.createElement('div');
+            thumbWrap.style.position = 'relative';
+            thumbWrap.style.width = '100%';
+            thumbWrap.style.aspectRatio = '1 / 1';
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '4px';
+            
+            const delBtn = document.createElement('button');
+            delBtn.innerHTML = '&times;';
+            delBtn.style.position = 'absolute';
+            delBtn.style.top = '2px';
+            delBtn.style.right = '2px';
+            delBtn.style.background = 'rgba(255,0,0,0.8)';
+            delBtn.style.color = 'white';
+            delBtn.style.border = 'none';
+            delBtn.style.borderRadius = '50%';
+            delBtn.style.width = '20px';
+            delBtn.style.height = '20px';
+            delBtn.style.lineHeight = '20px';
+            delBtn.style.textAlign = 'center';
+            delBtn.style.cursor = 'pointer';
+            delBtn.style.fontSize = '14px';
+            delBtn.style.padding = '0';
+            
+            delBtn.onclick = async (e) => {
+                e.stopPropagation();
+                await deleteCustomImageFromDB(id);
+                await reloadCustomImages();
+            };
+            
+            thumbWrap.appendChild(img);
+            thumbWrap.appendChild(delBtn);
+            customImageList.appendChild(thumbWrap);
+        }
+    });
+    
+    customDeck = customData.map(c => ({ type: 'custom', ...c }));
+    if (customImageCount) {
+        customImageCount.innerHTML = `目前已上傳: ${customData.length} 張`;
+    }
+}
+
+if (btnUploadCustom && customImageInput) {
+    btnUploadCustom.addEventListener('click', (e) => {
+        e.stopPropagation();
+        customImageInput.click();
+    });
+
+    customImageInput.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        
+        await addCustomImagesToDB(files);
+        await reloadCustomImages();
+        
+        customImageInput.value = '';
+    });
+}
+
+async function initializeApp() {
+    try {
+        await initDB();
+        const records = await loadCustomImagesFromDB();
+        processCustomFiles(records || []);
+    } catch (e) {
+        console.error("IndexedDB error:", e);
+    }
+
+    if (themeSelect) {
+        const savedTheme = localStorage.getItem('magic-theme') || 'theme-poker';
+        document.body.className = savedTheme;
+        themeSelect.value = savedTheme;
+        
+        if (savedTheme === 'theme-custom' && customImageSettings) {
+            customImageSettings.style.display = 'block';
+        }
+
+        loadDeckTheme(savedTheme);
+
+        themeSelect.addEventListener('change', (e) => {
+            const newTheme = e.target.value;
+            document.body.className = newTheme;
+            localStorage.setItem('magic-theme', newTheme);
+            
+            if (customImageSettings) {
+                customImageSettings.style.display = newTheme === 'theme-custom' ? 'block' : 'none';
+            }
+            
+            loadDeckTheme(newTheme);
+        });
+    } else {
+        loadDeckTheme('theme-poker');
+    }
+}
+
+initializeApp();
