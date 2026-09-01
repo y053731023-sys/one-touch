@@ -45,28 +45,21 @@ const flagDeck = flagData.map(f => ({ type: 'flag', ...f }));
 
 const landmarkData = [
     { name: 'Taipei 101', url: '圖片/台北101.webp', display: '台北 101' },
-    { name: 'Eiffel Tower', url: '圖片/巴黎鐵塔.jpg', display: '巴黎鐵塔' },
+    { name: 'Big Ben', url: '圖片/大笨鐘.webp', display: '大笨鐘' },
+    { name: 'Mount Fuji', url: '圖片/富士山.webp', display: '富士山' },
+    { name: 'Eiffel Tower', url: '圖片/巴黎鐵塔.webp', display: '巴黎鐵塔' },
+    { name: 'Moai', url: '圖片/復活節島石像.webp', display: '復活節島石像' },
+    { name: 'Christ the Redeemer', url: '圖片/救世基督像.webp', display: '救世基督像' },
+    { name: 'Burj Al Arab', url: '圖片/杜拜帆船飯店.webp', display: '杜拜帆船飯店' },
+    { name: 'Leaning Tower of Pisa', url: '圖片/比薩斜塔.webp', display: '比薩斜塔' },
+    { name: 'Uluru', url: '圖片/烏魯魯艾爾斯岩.webp', display: '烏魯魯艾爾斯岩' },
+    { name: 'Colosseum', url: '圖片/羅馬競技場.webp', display: '羅馬競技場' },
+    { name: 'Hagia Sophia', url: '圖片/聖索菲亞大教堂.webp', display: '聖索菲亞大教堂' },
     { name: 'Statue of Liberty', url: '圖片/自由女神.webp', display: '自由女神像' },
-    { name: 'Mount Fuji', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg/500px-View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg', display: '富士山' },
-    { name: 'Great Wall of China', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/500px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg', display: '萬里長城' },
-    { name: 'Leaning Tower of Pisa', url: '圖片/比薩斜塔.jpg', display: '比薩斜塔' },
-    { name: 'Colosseum', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/500px-Colosseo_2020.jpg', display: '羅馬競技場' },
-    { name: 'Taj Mahal', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taj_Mahal_%28Edited%29.jpeg/500px-Taj_Mahal_%28Edited%29.jpeg', display: '泰姬陵' },
-    { name: 'Sydney Opera House', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Sydney_Australia._%2821339175489%29.jpg/500px-Sydney_Australia._%2821339175489%29.jpg', display: '雪梨歌劇院' },
-    { name: 'Pyramids of Giza', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Great_Pyramid_of_Giza_-_Pyramid_of_Khufu.jpg/500px-Great_Pyramid_of_Giza_-_Pyramid_of_Khufu.jpg', display: '金字塔' },
-    { name: 'Big Ben', url: '圖片/大笨鐘.jpg', display: '大笨鐘' },
-    { name: 'Christ the Redeemer', url: '圖片/救世基督像.jpg', display: '救世基督像' },
-    { name: 'Iceland Aurora', url: '圖片/冰島極光.jpg', display: '冰島極光' },
-    { name: 'Stonehenge', url: '圖片/巨石陣.jpg', display: '巨石陣' },
-    { name: 'Moai', url: '圖片/復活節島石像.jpg', display: '復活節島石像' },
-    { name: 'Burj Al Arab', url: '圖片/杜拜帆船飯店.jpg', display: '杜拜帆船飯店' },
-    { name: 'Uluru', url: '圖片/烏魯魯艾爾斯岩.jpg', display: '烏魯魯艾爾斯岩' },
-    { name: 'Victoria Falls', url: '圖片/维多利亞瀑布.jpg', display: '維多利亞瀑布' },
-    { name: 'Grand Canyon', url: '圖片/美國大峽谷.jpg', display: '美國大峽谷' },
-    { name: 'Mount Everest', url: '圖片/聖母峰.jpg', display: '聖母峰' },
-    { name: 'Hagia Sophia', url: '圖片/聖索菲亞大教堂.jpg', display: '聖索菲亞大教堂' },
-    { name: 'Machu Picchu', url: '圖片/馬丘比丘.jpg', display: '馬丘比丘' },
-    { name: 'Maldives', url: '圖片/馬爾地夫.jpg', display: '馬爾地夫' }
+    { name: 'Great Wall of China', url: '圖片/萬里長城.webp', display: '萬里長城' },
+    { name: 'Pyramids of Giza', url: '圖片/金字塔.webp', display: '金字塔' },
+    { name: 'Machu Picchu', url: '圖片/馬丘比丘.webp', display: '馬丘比丘' },
+    { name: 'Maldives', url: '圖片/馬爾地夫.webp', display: '馬爾地夫' }
 ];
 const landmarkDeck = landmarkData.map(l => ({ type: 'landmark', ...l }));
 
@@ -103,6 +96,13 @@ let isDraggingCarousel = false;
 let hasDragged = false;
 let isRecordingActive = false;
 let hasRecorded = false;
+let mechanism2Timer = null;
+let mechanism2Ready = false;
+let swipeSequence = 0;
+let firstSwipeDirection = null;
+let touchStartX = 0;
+let touchEndX = 0;
+let touchStartIndex = 0;
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -121,9 +121,22 @@ const observer = new IntersectionObserver((entries) => {
                     console.log("背景紀錄觀眾的牌:", secretChosenCard.display);
                 }, 5000);
             }
+            
+            // 第二機制：觀眾打亂後停在某張牌3秒
+            clearTimeout(mechanism2Timer);
+            if (hasRecorded && !mechanism2Ready && !isRecordingActive && secretChosenCard) {
+                mechanism2Timer = setTimeout(() => {
+                    mechanism2Ready = true;
+                    swipeSequence = 0;
+                    firstSwipeDirection = null;
+                    if (navigator.vibrate) navigator.vibrate(20);
+                    console.log("第二機制已啟動，等待首次滑動");
+                }, 3000);
+            }
         } else {
             if (entry.target === currentlyVisibleCardElement) {
                 clearTimeout(viewTimer);
+                clearTimeout(mechanism2Timer);
             }
         }
     });
@@ -137,6 +150,10 @@ if (secretTrigger) {
         isRecordingActive = true;
         hasRecorded = false;
         secretChosenCard = null;
+        clearTimeout(mechanism2Timer);
+        mechanism2Ready = false;
+        swipeSequence = 0;
+        firstSwipeDirection = null;
         if (navigator.vibrate) navigator.vibrate(20); // 短震動提示開啟紀錄
         console.log("已開啟背景紀錄模式");
         
@@ -202,7 +219,7 @@ function initCarousel() {
                         deck[secretIndex] = originalCard;
                     }
 
-                    // 變牌後清除紀錄，點其他牌就不會再變了
+                    // 變牌後清除紀錄，結束所有機制
                     secretChosenCard = null;
                     currentlyVisibleCard = targetSecretCard;
                 }, 300);
@@ -223,12 +240,18 @@ carousel.addEventListener('mousedown', (e) => {
     hasDragged = false;
     startScrollX = e.pageX - carousel.offsetLeft;
     scrollLeft = carousel.scrollLeft;
+    touchStartX = e.pageX;
+    if (currentlyVisibleCardElement) {
+        touchStartIndex = parseInt(currentlyVisibleCardElement.dataset.index);
+    }
 });
 carousel.addEventListener('mouseleave', () => {
     isDraggingCarousel = false;
 });
-carousel.addEventListener('mouseup', () => {
+carousel.addEventListener('mouseup', (e) => {
     isDraggingCarousel = false;
+    touchEndX = e.pageX;
+    handleSwipe(touchStartX, touchEndX, touchStartIndex);
 });
 carousel.addEventListener('mousemove', (e) => {
     if (!isDraggingCarousel) return;
@@ -238,6 +261,83 @@ carousel.addEventListener('mousemove', (e) => {
     const walk = (x - startScrollX) * 2; // 滾動速度
     carousel.scrollLeft = scrollLeft - walk;
 });
+
+// 手機滑動支援 (Touch events)
+carousel.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].clientX;
+    if (currentlyVisibleCardElement) {
+        touchStartIndex = parseInt(currentlyVisibleCardElement.dataset.index);
+    }
+}, { passive: true });
+
+carousel.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].clientX;
+    handleSwipe(touchStartX, touchEndX, touchStartIndex);
+});
+
+function handleSwipe(startX, endX, startIndex) {
+    if (!mechanism2Ready) return;
+    
+    let diff = endX - startX;
+    let threshold = 30; // 30px swipe threshold
+    
+    let swipeDirection = null;
+    if (diff > threshold) swipeDirection = 'right';
+    else if (diff < -threshold) swipeDirection = 'left';
+    
+    if (!swipeDirection) return;
+    
+    if (swipeSequence === 0) {
+        firstSwipeDirection = swipeDirection;
+        swipeSequence = 1;
+        console.log(`第一段滑動 (${swipeDirection}) 觸發，等待反向滑動`);
+    } else if (swipeSequence === 1) {
+        if (swipeDirection !== firstSwipeDirection) {
+            swipeSequence = 2;
+            console.log(`反向滑動 (${swipeDirection}) 觸發，啟動變牌`);
+            executeMechanism2(startIndex, swipeDirection);
+        } else {
+            console.log(`同向滑動 (${swipeDirection})，繼續等待反向滑動`);
+        }
+    }
+}
+
+function executeMechanism2(startIndex, finalSwipeDirection) {
+    let targetIndex = (finalSwipeDirection === 'left') ? startIndex + 4 : startIndex - 4;
+    
+    if (targetIndex >= deck.length) {
+        targetIndex = deck.length - 1;
+    } else if (targetIndex < 0) {
+        targetIndex = 0;
+    }
+    
+    let targetCardEl = carousel.children[targetIndex];
+    if (targetCardEl && secretChosenCard) {
+        let front = targetCardEl.querySelector('.card-front');
+        let secretIndex = deck.findIndex(c => c === secretChosenCard);
+        let originalTargetCard = deck[targetIndex];
+        
+        if (secretIndex !== -1 && secretIndex !== targetIndex) {
+            let originalSecretDom = carousel.children[secretIndex].querySelector('.card-front');
+            if (originalSecretDom) {
+                renderCardFront(originalSecretDom, originalTargetCard);
+            }
+            deck[secretIndex] = originalTargetCard;
+        }
+        
+        renderCardFront(front, secretChosenCard);
+        deck[targetIndex] = secretChosenCard;
+        
+        if (navigator.vibrate) navigator.vibrate([30, 30, 30]);
+        let dirName = (finalSwipeDirection === 'left') ? '左' : '右';
+        console.log(`已將觀眾的牌放置於第 ${targetIndex} 張 (${dirName}滑的第四張)`);
+        
+        mechanism2Ready = false;
+        swipeSequence = 0;
+        firstSwipeDirection = null;
+        // 保留觀眾牌紀錄，允許第一機制（點擊變牌）繼續使用
+    }
+}
 
 
 
@@ -252,11 +352,37 @@ function renderCardFront(element, card) {
     element.innerHTML = '';
     element.style.backgroundColor = 'white';
     
-    if (card.type === 'poker') {
-        element.style.backgroundImage = `url(${getCardImageUrl(card.suit.symbol, card.value)})`;
-        element.style.backgroundSize = '100% 100%';
-        element.style.flexDirection = 'row';
-    } else if (card.type === 'flag' || card.type === 'landmark' || card.type === 'custom' || card.type === 'beauty') {
+    if (card.type === 'poker' || card.type === 'beauty' || card.type === 'landmark') {
+        let url = card.type === 'poker' ? getCardImageUrl(card.suit.symbol, card.value) : card.url;
+        element.style.backgroundImage = `url("${url}")`;
+        element.style.backgroundSize = card.type === 'poker' ? '100% 100%' : 'cover';
+        element.style.backgroundPosition = 'center';
+        element.style.backgroundRepeat = 'no-repeat';
+        
+        if (card.type === 'landmark') {
+            element.style.flexDirection = 'column';
+            element.style.justifyContent = 'flex-end';
+            
+            const label = document.createElement('div');
+            label.textContent = card.display;
+            label.style.fontSize = '28px';
+            label.style.fontWeight = '700';
+            label.style.color = '#fff';
+            label.style.textAlign = 'center';
+            label.style.width = '100%';
+            label.style.padding = '20px 10px 15px 10px';
+            label.style.background = 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%)';
+            label.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
+            label.style.wordBreak = 'break-word';
+            label.style.letterSpacing = '2px';
+            label.style.borderBottomLeftRadius = 'inherit';
+            label.style.borderBottomRightRadius = 'inherit';
+            
+            element.appendChild(label);
+        } else {
+            element.style.flexDirection = 'row';
+        }
+    } else if (card.type === 'flag' || card.type === 'custom') {
         element.style.backgroundImage = 'none';
         element.style.flexDirection = 'column';
         
@@ -267,22 +393,22 @@ function renderCardFront(element, card) {
             img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         }
         img.style.width = '85%';
-        img.style.aspectRatio = card.type === 'beauty' ? '3 / 4' : (card.type === 'flag' ? '3 / 2' : '4 / 3'); 
-        img.style.objectFit = (card.type === 'custom' || card.type === 'beauty') ? 'contain' : 'cover';
+        img.style.aspectRatio = card.type === 'flag' ? '3 / 2' : '4 / 3'; 
+        img.style.objectFit = card.type === 'custom' ? 'contain' : 'cover';
         img.style.border = '1px solid #ddd';
         img.style.borderRadius = '6px';
         img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-        img.style.marginBottom = ((card.type === 'custom' && card.url) || card.type === 'beauty') ? '0' : '24px';
+        img.style.marginBottom = (card.type === 'custom' && card.url) ? '0' : '24px';
         
         element.appendChild(img);
         
-        if ((card.type !== 'custom' && card.type !== 'beauty') || (card.type === 'custom' && !card.url)) {
+        if (card.type !== 'custom' || (card.type === 'custom' && !card.url)) {
             const label = document.createElement('div');
             label.textContent = card.display;
-            label.style.fontSize = (card.type === 'custom' || card.type === 'beauty') ? '18px' : '32px';
+            label.style.fontSize = card.type === 'custom' ? '18px' : '32px';
             label.style.fontWeight = '600';
             label.style.color = '#333';
-            label.style.letterSpacing = (card.type === 'custom' || card.type === 'beauty') ? '1px' : '4px';
+            label.style.letterSpacing = card.type === 'custom' ? '1px' : '4px';
             label.style.textAlign = 'center';
             label.style.padding = '0 10px';
             label.style.wordBreak = 'break-word';
@@ -329,6 +455,10 @@ function loadDeckTheme(theme) {
     currentlyVisibleCard = null;
     isRecordingActive = false;
     hasRecorded = false;
+    clearTimeout(mechanism2Timer);
+    mechanism2Ready = false;
+    swipeSequence = 0;
+    firstSwipeDirection = null;
     
     setTimeout(() => {
         const middleIndex = Math.floor(deck.length / 2);
