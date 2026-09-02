@@ -59,7 +59,16 @@ const landmarkData = [
     { name: 'Great Wall of China', url: '圖片/萬里長城.webp', display: '萬里長城' },
     { name: 'Pyramids of Giza', url: '圖片/金字塔.webp', display: '金字塔' },
     { name: 'Machu Picchu', url: '圖片/馬丘比丘.webp', display: '馬丘比丘' },
-    { name: 'Maldives', url: '圖片/馬爾地夫.webp', display: '馬爾地夫' }
+    { name: 'Maldives', url: '圖片/馬爾地夫.webp', display: '馬爾地夫' },
+    { name: 'Iceland Aurora', url: '圖片/冰島極光.webp', display: '冰島極光' },
+    { name: 'Angkor Wat', url: '圖片/吳哥窟.webp', display: '吳哥窟' },
+    { name: 'Chichen Itza', url: '圖片/墨西哥瑪雅古跡.webp', display: '墨西哥瑪雅古蹟' },
+    { name: 'Great Barrier Reef', url: '圖片/大堡礁.webp', display: '大堡礁' },
+    { name: 'Stonehenge', url: '圖片/巨石陣.webp', display: '巨石陣' },
+    { name: 'Victoria Falls', url: '圖片/维多利亞瀑布.webp', display: '維多利亞瀑布' },
+    { name: 'Grand Canyon', url: '圖片/美國大峽谷.webp', display: '美國大峽谷' },
+    { name: 'Mount Everest', url: '圖片/聖母峰.webp', display: '聖母峰' },
+    { name: 'Sydney Opera House', url: '圖片/雪梨歌劇院.webp', display: '雪梨歌劇院' }
 ];
 const landmarkDeck = landmarkData.map(l => ({ type: 'landmark', ...l }));
 
