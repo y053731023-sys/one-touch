@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet">
 </head>
+
 <body class="theme-default">
     <div id="app">
         <!-- 階段一：選牌 Carousel -->
@@ -35,17 +37,23 @@
                 </select>
                 <div id="custom-image-settings" style="display: none; margin-top: 15px;">
                     <input type="file" id="custom-image-input" multiple accept="image/*" style="display: none;">
-                    <button id="btn-upload-custom" style="width: 100%; background: #007aff; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">新增圖片</button>
-                    <div id="custom-image-count" style="margin-top: 10px; font-size: 14px; text-align: center; color: #ccc;">目前已上傳: 0 張</div>
-                    <div id="custom-image-list" style="margin-top: 10px; max-height: 150px; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-right: 5px;"></div>
+                    <button id="btn-upload-custom"
+                        style="width: 100%; background: #007aff; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">新增圖片</button>
+                    <div id="custom-image-count"
+                        style="margin-top: 10px; font-size: 14px; text-align: center; color: #ccc;">目前已上傳: 0 張</div>
+                    <div id="custom-image-list"
+                        style="margin-top: 10px; max-height: 150px; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-right: 5px;">
+                    </div>
                 </div>
                 <div class="modal-actions" style="margin-top: 20px;">
-                    <button id="btn-close-settings" style="width: 100%; background: #444; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">關閉</button>
+                    <button id="btn-close-settings"
+                        style="width: 100%; background: #444; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">關閉</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
+
 </html>
