@@ -149,21 +149,6 @@ let deck = [];
 // DOM 元素
 const carousel = document.getElementById('carousel');
 
-// Lazy Load Observer
-const lazyImageObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const el = entry.target;
-            const url = el.dataset.bgUrl;
-            if (url) {
-                el.style.backgroundImage = `url("${url}")`;
-                el.removeAttribute('data-bg-url');
-            }
-            observer.unobserve(el);
-        }
-    });
-}, { rootMargin: '800px 800px' });
-
 // 狀態
 let secretChosenCard = null;
 let viewTimer = null;
@@ -428,14 +413,10 @@ function renderCardFront(element, card) {
     element.className = 'card-front';
     element.innerHTML = '';
     element.style.backgroundColor = 'white';
-    element.style.backgroundImage = 'none'; // 重置背景
     
     if (card.type === 'poker' || card.type === 'beauty' || card.type === 'landmark') {
         let url = card.type === 'poker' ? getCardImageUrl(card.suit.symbol, card.value) : card.url;
-        
-        element.dataset.bgUrl = url;
-        lazyImageObserver.observe(element);
-        
+        element.style.backgroundImage = `url("${url}")`;
         element.style.backgroundSize = card.type === 'poker' ? '100% 100%' : 'cover';
         element.style.backgroundPosition = 'center';
         element.style.backgroundRepeat = 'no-repeat';
