@@ -718,6 +718,18 @@ if (btnUploadCustom && customImageInput) {
     });
 }
 
+// 背景偷偷預載圖片，消除切換主題時的讀取感
+function preloadImages() {
+    // 延遲 1 秒再開始預載，確保不會卡到初始網頁的載入
+    setTimeout(() => {
+        const allImages = [...beautyData, ...landmarkData];
+        allImages.forEach(card => {
+            const img = new Image();
+            img.src = card.url;
+        });
+    }, 1000);
+}
+
 async function initializeApp() {
     try {
         await initDB();
@@ -752,6 +764,9 @@ async function initializeApp() {
     } else {
         loadDeckTheme('theme-poker');
     }
+    
+    // 啟動背景預載
+    preloadImages();
 }
 
 initializeApp();
