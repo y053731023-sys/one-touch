@@ -73,7 +73,6 @@ const landmarkData = [
 const landmarkDeck = landmarkData.map(l => ({ type: 'landmark', ...l }));
 
 const beautyData = [
-    { name: '老奶奶', url: '美女圖片/老奶奶.jpg', display: '老奶奶' },
     { name: '短髮x捲髮x亞洲人x金髮x平胸x休閒穿著', url: '美女圖片/短髮x捲髮x亞洲人x金髮x平胸x休閒穿著.webp', display: '短髮x捲髮x亞洲人x金髮x平胸x休閒穿著' },
     { name: '短髮x捲髮x亞洲人x金髮x平胸x比基尼', url: '美女圖片/短髮x捲髮x亞洲人x金髮x平胸x比基尼.webp', display: '短髮x捲髮x亞洲人x金髮x平胸x比基尼' },
     { name: '短髮x捲髮x亞洲人x金髮x豐滿胸型x休閒穿著', url: '美女圖片/短髮x捲髮x亞洲人x金髮x豐滿胸型x休閒穿著.webp', display: '短髮x捲髮x亞洲人x金髮x豐滿胸型x休閒穿著' },
