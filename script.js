@@ -501,7 +501,7 @@ function loadDeckTheme(theme) {
     
     // 建立大量重複的牌組以產生「無限循環」的效果
     deck = [];
-    const repeatCount = (theme === 'theme-flags' || theme === 'theme-landmarks' || theme === 'theme-custom' || theme === 'theme-beauties') ? 50 : 15;
+    const repeatCount = (theme === 'theme-flags' || theme === 'theme-landmarks' || theme === 'theme-custom' || theme === 'theme-beauties') ? 4 : 3;
     for (let i = 0; i < repeatCount; i++) {
         deck.push(...baseDeck.map(c => ({...c})));
     }
