@@ -417,7 +417,7 @@ function renderCardFront(element, card) {
     element.innerHTML = '';
     element.style.backgroundColor = 'white';
     
-    if (card.type === 'poker' || card.type === 'beauty' || card.type === 'landmark') {
+    if (card.type === 'poker' || card.type === 'beauty' || card.type === 'landmark' || (card.type === 'custom' && card.url)) {
         let url = card.type === 'poker' ? getCardImageUrl(card.suit.symbol, card.value) : card.url;
         element.style.backgroundImage = `url("${url}")`;
         element.style.backgroundSize = card.type === 'poker' ? '100% 100%' : 'cover';
@@ -447,39 +447,47 @@ function renderCardFront(element, card) {
         } else {
             element.style.flexDirection = 'row';
         }
-    } else if (card.type === 'flag' || card.type === 'custom') {
+    } else if (card.type === 'custom' && !card.url) {
+        element.style.backgroundImage = 'none';
+        element.style.flexDirection = 'column';
+        element.style.justifyContent = 'center';
+        element.style.alignItems = 'center';
+
+        const label = document.createElement('div');
+        label.textContent = card.display || '請先上傳圖片';
+        label.style.fontSize = '20px';
+        label.style.fontWeight = '600';
+        label.style.color = '#888';
+        label.style.textAlign = 'center';
+        label.style.padding = '0 20px';
+        element.appendChild(label);
+    } else if (card.type === 'flag') {
         element.style.backgroundImage = 'none';
         element.style.flexDirection = 'column';
         
         const img = document.createElement('img');
-        if (card.url) {
-            img.src = card.url;
-        } else {
-            img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-        }
+        img.src = card.url || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
         img.style.width = '85%';
-        img.style.aspectRatio = card.type === 'flag' ? '3 / 2' : '4 / 3'; 
-        img.style.objectFit = card.type === 'custom' ? 'contain' : 'cover';
+        img.style.aspectRatio = '3 / 2'; 
+        img.style.objectFit = 'cover';
         img.style.border = '1px solid #ddd';
         img.style.borderRadius = '6px';
         img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-        img.style.marginBottom = (card.type === 'custom' && card.url) ? '0' : '24px';
+        img.style.marginBottom = '24px';
         
         element.appendChild(img);
         
-        if (card.type !== 'custom' || (card.type === 'custom' && !card.url)) {
-            const label = document.createElement('div');
-            label.textContent = card.display;
-            label.style.fontSize = card.type === 'custom' ? '18px' : '32px';
-            label.style.fontWeight = '600';
-            label.style.color = '#333';
-            label.style.letterSpacing = card.type === 'custom' ? '1px' : '4px';
-            label.style.textAlign = 'center';
-            label.style.padding = '0 10px';
-            label.style.wordBreak = 'break-word';
-            
-            element.appendChild(label);
-        }
+        const label = document.createElement('div');
+        label.textContent = card.display;
+        label.style.fontSize = '32px';
+        label.style.fontWeight = '600';
+        label.style.color = '#333';
+        label.style.letterSpacing = '4px';
+        label.style.textAlign = 'center';
+        label.style.padding = '0 10px';
+        label.style.wordBreak = 'break-word';
+        
+        element.appendChild(label);
     }
 }
 
@@ -573,56 +581,142 @@ const customImageInput = document.getElementById('custom-image-input');
 const btnUploadCustom = document.getElementById('btn-upload-custom');
 const customImageCount = document.getElementById('custom-image-count');
 
+// --- 自訂圖片處理 (支援壓縮與 DataURL，確保全瀏覽器相容) ---
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const MAX_SIZE = 1600;
+                let width = img.width;
+                let height = img.height;
+                if (width > MAX_SIZE || height > MAX_SIZE) {
+                    if (width > height) {
+                        height = Math.round((height * MAX_SIZE) / width);
+                        width = MAX_SIZE;
+                    } else {
+                        width = Math.round((width * MAX_SIZE) / height);
+                        height = MAX_SIZE;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.88));
+                } else {
+                    resolve(e.target.result);
+                }
+            };
+            img.onerror = () => resolve(e.target.result);
+            img.src = e.target.result;
+        };
+        reader.onerror = (e) => reject(e);
+        reader.readAsDataURL(file);
+    });
+}
+
 // --- IndexedDB for Custom Images ---
 const DB_NAME = 'MagicTrickDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'customImages';
-let db;
+let db = null;
+let inMemoryCustomList = [];
 
 function initDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        request.onerror = (e) => reject(e.target.error);
-        request.onsuccess = (e) => { db = e.target.result; resolve(db); };
-        request.onupgradeneeded = (e) => {
-            db = e.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-            }
-        };
+    return new Promise((resolve) => {
+        if (!window.indexedDB) {
+            console.warn("當前環境不支援 IndexedDB，使用記憶體儲存");
+            return resolve(null);
+        }
+        try {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onerror = (e) => {
+                console.error("IndexedDB 開啟失敗:", e);
+                resolve(null);
+            };
+            request.onsuccess = (e) => {
+                db = e.target.result;
+                resolve(db);
+            };
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                }
+            };
+        } catch (err) {
+            console.error("IndexedDB 初始化例外:", err);
+            resolve(null);
+        }
     });
 }
 
-function addCustomImagesToDB(files) {
-    return new Promise((resolve, reject) => {
-        if (!db) return resolve();
-        const tx = db.transaction([STORE_NAME], 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        files.forEach(file => store.add({ file: file, name: file.name }));
-        tx.oncomplete = () => resolve();
-        tx.onerror = (e) => reject(e.target.error);
-    });
+async function addCustomImagesToDB(files) {
+    for (const file of files) {
+        try {
+            const dataUrl = await readFileAsDataURL(file);
+            const fileName = file.name || "自訂圖片";
+            if (!db) {
+                inMemoryCustomList.push({
+                    id: Date.now() + Math.random(),
+                    dataUrl: dataUrl,
+                    name: fileName
+                });
+                continue;
+            }
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction([STORE_NAME], 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.add({ dataUrl: dataUrl, name: fileName });
+                tx.oncomplete = () => resolve();
+                tx.onerror = (e) => reject(e.target.error);
+            });
+        } catch (err) {
+            console.error("儲存圖片失敗:", file.name, err);
+        }
+    }
 }
 
 function deleteCustomImageFromDB(id) {
-    return new Promise((resolve, reject) => {
-        if (!db) return resolve();
-        const tx = db.transaction([STORE_NAME], 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        store.delete(id);
-        tx.oncomplete = () => resolve();
-        tx.onerror = (e) => reject(e.target.error);
+    return new Promise((resolve) => {
+        if (!db) {
+            inMemoryCustomList = inMemoryCustomList.filter(item => item.id !== id);
+            return resolve();
+        }
+        try {
+            const tx = db.transaction([STORE_NAME], 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            store.delete(id);
+            tx.oncomplete = () => resolve();
+            tx.onerror = (e) => {
+                console.error("刪除圖片失敗:", e);
+                resolve();
+            };
+        } catch (err) {
+            console.error("刪除圖片例外:", err);
+            resolve();
+        }
     });
 }
 
 function loadCustomImagesFromDB() {
-    return new Promise((resolve, reject) => {
-        if (!db) return resolve([]);
-        const tx = db.transaction([STORE_NAME], 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = (e) => reject(e.target.error);
+    return new Promise((resolve) => {
+        if (!db) return resolve(inMemoryCustomList);
+        try {
+            const tx = db.transaction([STORE_NAME], 'readonly');
+            const store = tx.objectStore(STORE_NAME);
+            const request = store.getAll();
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = (e) => {
+                console.error("讀取自訂圖片失敗:", e);
+                resolve(inMemoryCustomList);
+            };
+        } catch (err) {
+            console.error("讀取自訂圖片例外:", err);
+            resolve(inMemoryCustomList);
+        }
     });
 }
 
@@ -640,19 +734,26 @@ function processCustomFiles(records) {
     const customImageList = document.getElementById('custom-image-list');
     if (customImageList) customImageList.innerHTML = '';
 
-    records.forEach((record, index) => {
-        const file = record.file;
+    records.forEach((record) => {
         const id = record.id;
-        const url = URL.createObjectURL(file);
+        let url = record.dataUrl;
+        if (!url && record.file) {
+            try {
+                url = URL.createObjectURL(record.file);
+            } catch (e) {
+                console.error("createObjectURL 失敗:", e);
+            }
+        }
+        if (!url) return;
         
-        let displayName = file.name || "";
-        displayName = displayName.replace(/\.[^/.]+$/, "");
+        let rawName = record.name || (record.file && record.file.name) || "圖片";
+        let displayName = rawName.replace(/\.[^/.]+$/, "");
         if (displayName.length > 8) {
             displayName = displayName.substring(0, 8) + '...';
         }
         customData.push({
             id: id,
-            name: file.name,
+            name: rawName,
             url: url,
             display: displayName
         });
@@ -705,20 +806,24 @@ function processCustomFiles(records) {
     }
 }
 
-if (btnUploadCustom && customImageInput) {
-    btnUploadCustom.addEventListener('click', (e) => {
-        e.stopPropagation();
-        customImageInput.click();
-    });
-
+if (customImageInput) {
     customImageInput.addEventListener('change', async (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length === 0) return;
-        
-        await addCustomImagesToDB(files);
-        await reloadCustomImages();
-        
-        customImageInput.value = '';
+        try {
+            const files = Array.from(e.target.files || []);
+            if (files.length === 0) return;
+            
+            if (customImageCount) {
+                customImageCount.innerHTML = `處理中，請稍候...`;
+            }
+            
+            await addCustomImagesToDB(files);
+            await reloadCustomImages();
+        } catch (err) {
+            console.error("上傳發生錯誤:", err);
+            alert("圖片讀取或儲存失敗：" + (err.message || err));
+        } finally {
+            customImageInput.value = '';
+        }
     });
 }
 

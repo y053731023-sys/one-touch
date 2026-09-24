@@ -36,9 +36,10 @@
                     <option value="theme-custom">自訂圖片</option>
                 </select>
                 <div id="custom-image-settings" style="display: none; margin-top: 15px;">
-                    <input type="file" id="custom-image-input" multiple accept="image/*" style="display: none;">
-                    <button id="btn-upload-custom"
-                        style="width: 100%; background: #007aff; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">新增圖片</button>
+                    <input type="file" id="custom-image-input" multiple accept="image/*"
+                        style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;">
+                    <label for="custom-image-input" id="btn-upload-custom"
+                        style="display: block; width: 100%; background: #007aff; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; text-align: center; font-size: 16px; font-weight: 600; box-sizing: border-box; user-select: none;">新增圖片</label>
                     <div id="custom-image-count"
                         style="margin-top: 10px; font-size: 14px; text-align: center; color: #ccc;">目前已上傳: 0 張</div>
                     <div id="custom-image-list"
